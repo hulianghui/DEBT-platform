@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>热电联产设备数字化管理平台 - macOS暗黑风格UI</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, sans-serif;
+      background-color: #121212;
+      color: #FFFFFF;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* macOS 风格滚动条 */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #48484A;
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #606060;
+    }
+
+    /* 玻璃态效果 */
+    .glass {
+      background: rgba(44, 44, 46, 0.8);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    /* 平滑过渡 */
+    .transition-smooth {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* 按钮悬停效果 */
+    .btn-hover:hover {
+      transform: scale(1.02);
+    }
+
+    .btn-hover:active {
+      transform: scale(0.98);
+    }
+
+    /* 自定义颜色 */
+    .bg-macos-bg { background-color: #121212; }
+    .bg-macos-sidebar { background-color: #1C1C1E; }
+    .bg-macos-card { background-color: #2C2C2E; }
+    .bg-macos-accent { background-color: #0A84FF; }
+    .bg-macos-accent-hover { background-color: #0077ED; }
+    .bg-macos-success { background-color: #30D158; }
+    .bg-macos-warning { background-color: #FFD60A; }
+    .bg-macos-error { background-color: #FF453A; }
+    
+    .text-macos-text { color: #FFFFFF; }
+    .text-macos-text-secondary { color: #8E8E93; }
+    .text-macos-accent { color: #0A84FF; }
+    .text-macos-success { color: #30D158; }
+    .text-macos-warning { color: #FFD60A; }
+    .text-macos-error { color: #FF453A; }
+    
+    .border-macos-border { border-color: #38383A; }
+    .border-macos-accent { border-color: #0A84FF; }
+
+    /* 阴影 */
+    .shadow-macos {
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    }
+
+    .shadow-macos-light {
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    /* 动画 */
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    .animate-pulse {
+      animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+
+    /* 侧边栏菜单项 */
+    .menu-item {
+      @apply flex items-center space-x-3 px-3 py-2.5 rounded-lg transition-smooth cursor-pointer;
+    }
+
+    .menu-item:hover {
+      @apply bg-macos-card text-macos-text;
+    }
+
+    .menu-item.active {
+      @apply bg-macos-accent text-white shadow-lg;
+    }
+
+    /* 卡片样式 */
+    .card {
+      @apply bg-macos-card rounded-xl border border-macos-border shadow-macos-light transition-all duration-300;
+    }
+
+    .card:hover {
+      @apply shadow-macos;
+    }
+
+    /* 按钮样式 */
+    .btn-primary {
+      @apply px-4 py-2 bg-macos-accent text-white rounded-lg text-sm font-medium hover:bg-macos-accent-hover transition-smooth btn-hover;
+    }
+
+    .btn-secondary {
+      @apply px-4 py-2 bg-macos-card border border-macos-border text-macos-text rounded-lg text-sm font-medium hover:bg-macos-card/80 transition-smooth;
+    }
+
+    /* 状态标签 */
+    .status-success {
+      @apply bg-macos-success/10 text-macos-success border border-macos-success/30;
+    }
+
+    .status-warning {
+      @apply bg-macos-warning/10 text-macos-warning border border-macos-warning/30;
+    }
+
+    .status-error {
+      @apply bg-macos-error/10 text-macos-error border border-macos-error/30;
+    }
+  </style>
+</head>
+<body class="h-screen overflow-hidden">
+  <div class="flex h-screen bg-macos-bg overflow-hidden">
+    <!-- 侧边栏 -->
+    <aside class="w-64 bg-macos-sidebar border-r border-macos-border flex flex-col">
+      <!-- Logo区域 -->
+      <div class="h-16 flex items-center justify-between px-4 border-b border-macos-border">
+        <div class="flex items-center space-x-3">
+          <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center">
+            <span class="text-white font-bold text-sm">热电</span>
+          </div>
+          <span class="font-semibold text-macos-text">数字化平台</span>
+        </div>
+      </div>
+
+      <!-- 导航菜单 -->
+      <nav class="flex-1 py-4 px-2 space-y-1">
+        <div class="menu-item active" onclick="switchTab('dashboard')">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"></path>
+          </svg>
+          <span class="text-sm font-medium">驾驶舱</span>
+        </div>
+        <div class="menu-item text-macos-text-secondary" onclick="switchTab('devices')">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+          </svg>
+          <span class="text-sm font-medium">设备监测</span>
+        </div>
+        <div class="menu-item text-macos-text-secondary" onclick="switchTab('alarms')">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+          </svg>
+          <span class="text-sm font-medium">告警中心</span>
+        </div>
+        <div class="menu-item text-macos-text-secondary">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
+          </svg>
+          <span class="text-sm font-medium">工单管理</span>
+        </div>
+        <div class="menu-item text-macos-text-secondary" onclick="switchTab('assets')">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+          </svg>
+          <span class="text-sm font-medium">资产管理</span>
+        </div>
+        <div class="menu-item text-macos-text-secondary">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+          </svg>
+          <span class="text-sm font-medium">报表中心</span>
+        </div>
+        <div class="menu-item text-macos-text-secondary">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+          </svg>
+          <span class="text-sm font-medium">系统设置</span>
+        </div>
+      </nav>
+
+      <!-- 用户信息 -->
+      <div class="p-4 border-t border-macos-border">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center">
+            <span class="text-white font-semibold">管</span>
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="text-sm font-medium text-macos-text truncate">管理员</p>
+            <p class="text-xs text-macos-text-secondary truncate">admin@debt.com</p>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- 主内容区 -->
+    <div class="flex-1 flex flex-col overflow-hidden">
+      <!-- 顶部导航 -->
+      <header class="h-16 bg-macos-sidebar border-b border-macos-border flex items-center justify-between px-6">
+        <div class="flex items-center space-x-4">
+          <div class="relative">
+            <svg class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-macos-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+            </svg>
+            <input
+              type="text"
+              placeholder="搜索设备、告警、资产..."
+              class="w-80 pl-10 pr-4 py-2 bg-macos-card border border-macos-border rounded-lg text-macos-text placeholder-macos-text-secondary focus:outline-none focus:border-macos-accent transition-smooth"
+            />
+          </div>
+          <button class="p-2 rounded-lg hover:bg-macos-card transition-smooth text-macos-text-secondary hover:text-macos-text">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+            </svg>
+          </button>
+        </div>
+
+        <div class="flex items-center space-x-6">
+          <div class="flex items-center space-x-2">
+            <span class="w-2 h-2 rounded-full bg-macos-success animate-pulse"></span>
+            <span class="text-sm text-macos-text-secondary">系统运行正常</span>
+          </div>
+          <div class="text-sm text-macos-text" id="currentTime"></div>
+        </div>
+
+        <div class="flex items-center space-x-3">
+          <button class="p-2 rounded-lg hover:bg-macos-card transition-smooth text-macos-text-secondary hover:text-macos-text relative">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+            </svg>
+            <span class="absolute top-1 right-1 w-2 h-2 rounded-full bg-macos-error"></span>
+          </button>
+          <button class="p-2 rounded-lg hover:bg-macos-card transition-smooth text-macos-text-secondary hover:text-macos-text">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+          </button>
+        </div>
+      </header>
+
+      <!-- 内容区域 -->
+      <main class="flex-1 overflow-auto p-6">
+        <!-- 驾驶舱内容 -->
+        <div id="dashboard-content" class="space-y-6">
+          <!-- 页面标题 -->
+          <div class="flex items-center justify-between">
+            <div>
+              <h1 class="text-2xl font-bold text-macos-text">驾驶舱</h1>
+              <p class="text-macos-text-secondary mt-1">实时监控全厂设备运行状态</p>
+            </div>
+          </div>
+
+          <!-- 统计卡片 -->
+          <div class="grid grid-cols-6 gap-4">
+            <!-- 设备总数 -->
+            <div class="card p-5">
+              <div class="flex items-start justify-between">
+                <div>
+                  <p class="text-sm text-macos-text-secondary mb-1">设备总数</p>
+                  <span class="text-2xl font-bold text-macos-text">256</span>
+                  <span class="text-sm text-macos-text-secondary ml-1">台</span>
+                </div>
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-2xl shadow-lg">
+                  📟
+                </div>
+              </div>
+            </div>
+            <!-- 在线率 -->
+            <div class="card p-5">
+              <div class="flex items-start justify-between">
+                <div>
+                  <p class="text-sm text-macos-text-secondary mb-1">在线率</p>
+                  <span class="text-2xl font-bold text-macos-text">99.2</span>
+                  <span class="text-sm text-macos-text-secondary ml-1">%</span>
+                  <div class="flex items-center space-x-1 mt-2">
+                    <svg class="w-3 h-3 text-macos-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
+                    </svg>
+                    <span class="text-xs text-macos-success">+0.5% 较昨日</span>
+                  </div>
+                </div>
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-green-500 to-green-600 flex items-center justify-center text-2xl shadow-lg">
+                  🌐
+                </div>
+              </div>
+            </div>
+            <!-- 活跃告警 -->
+            <div class="card p-5">
+              <div class="flex items-start justify-between">
+                <div>
+                  <p class="text-sm text-macos-text-secondary mb-1">活跃告警</p>
+                  <span class="text-2xl font-bold text-macos-text">12</span>
+                  <div class="flex items-center space-x-1 mt-2">
+                    <svg class="w-3 h-3 text-macos-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+                    </svg>
+                    <span class="text-xs text-macos-success">-3 较昨日</span>
+                  </div>
+                </div>
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-yellow-500 to-orange-500 flex items-center justify-center text-2xl shadow-lg">
+                  ⚠️
+                </div>
+              </div>
+            </div>
+            <!-- 待处理工单 -->
+            <div class="card p-5">
+              <div class="flex items-start justify-between">
+                <div>
+                  <p class="text-sm text-macos-text-secondary mb-1">待处理工单</p>
+                  <span class="text-2xl font-bold text-macos-text">5</span>
+                  <div class="flex items-center space-x-1 mt-2">
+                    <svg class="w-3 h-3 text-macos-error" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
+                    </svg>
+                    <span class="text-xs text-macos-error">+2 较昨日</span>
+                  </div>
+                </div>
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-red-500 to-red-600 flex items-center justify-center text-2xl shadow-lg">
+                  📋
+                </div>
+              </div>
+            </div>
+            <!-- 平均健康度 -->
+            <div class="card p-5">
+              <div class="flex items-start justify-between">
+                <div>
+                  <p class="text-sm text-macos-text-secondary mb-1">平均健康度</p>
+                  <span class="text-2xl font-bold text-macos-text">92.5</span>
+                  <span class="text-sm text-macos-text-secondary ml-1">%</span>
+                </div>
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center text-2xl shadow-lg">
+                  💚
+                </div>
+              </div>
+            </div>
+            <!-- 本月运维次数 -->
+            <div class="card p-5">
+              <div class="flex items-start justify-between">
+                <div>
+                  <p class="text-sm text-macos-text-secondary mb-1">本月运维次数</p>
+                  <span class="text-2xl font-bold text-macos-text">48</span>
+                  <div class="flex items-center space-x-1 mt-2">
+                    <svg class="w-3 h-3 text-macos-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+                    </svg>
+                    <span class="text-xs text-macos-success">-8 较上月</span>
+                  </div>
+                </div>
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-2xl shadow-lg">
+                  🔧
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 图表区域 -->
+          <div class="grid grid-cols-3 gap-6">
+            <!-- 设备状态趋势 -->
+            <div class="card col-span-2 p-6">
+              <h3 class="text-lg font-semibold text-macos-text mb-4">设备状态趋势</h3>
+              <div class="h-64">
+                <div class="flex items-center space-x-6 mb-4">
+                  <div class="flex items-center space-x-2">
+                    <span class="w-3 h-3 rounded-full bg-macos-success"></span>
+                    <span class="text-sm text-macos-text-secondary">在线率 (%)</span>
+                  </div>
+                  <div class="flex items-center space-x-2">
+                    <span class="w-3 h-3 rounded-full bg-macos-warning"></span>
+                    <span class="text-sm text-macos-text-secondary">异常率 (%)</span>
+                  </div>
+                </div>
+                <div class="relative h-48 flex items-end justify-between px-2">
+                  <div class="absolute left-0 top-0 h-full flex flex-col justify-between text-xs text-macos-text-secondary">
+                    <span>100%</span><span>75%</span><span>50%</span><span>25%</span><span>0%</span>
+                  </div>
+                  <div class="flex-1 flex items-end justify-between ml-12 space-x-1">
+                    <!-- 模拟柱状图 -->
+                    <div class="flex flex-col items-center justify-end h-40 w-8">
+                      <div class="w-full bg-macos-success/80 rounded-t-sm" style="height: 95%"></div>
+                      <div class="w-full bg-macos-warning/80 rounded-b-sm" style="height: 5%"></div>
+                      <span class="text-xs text-macos-text-secondary mt-2">00:00</span>
+                    </div>
+                    <div class="flex flex-col items-center justify-end h-40 w-8">
+                      <div class="w-full bg-macos-success/80 rounded-t-sm" style="height: 96%"></div>
+                      <div class="w-full bg-macos-warning/80 rounded-b-sm" style="height: 4%"></div>
+                      <span class="text-xs text-macos-text-secondary mt-2">04:00</span>
+                    </div>
+                    <div class="flex flex-col items-center justify-end h-40 w-8">
+                      <div class="w-full bg-macos-success/80 rounded-t-sm" style="height: 98%"></div>
+                      <div class="w-full bg-macos-warning/80 rounded-b-sm" style="height: 2%"></div>
+                      <span class="text-xs text-macos-text-secondary mt-2">08:00</span>
+                    </div>
+                    <div class="flex flex-col items-center justify-end h-40 w-8">
+                      <div class="w-full bg-macos-success/80 rounded-t-sm" style="height: 97%"></div>
+                      <div class="w-full bg-macos-warning/80 rounded-b-sm" style="height: 3%"></div>
+                      <span class="text-xs text-macos-text-secondary mt-2">12:00</span>
+                    </div>
+                    <div class="flex flex-col items-center justify-end h-40 w-8">
+                      <div class="w-full bg-macos-success/80 rounded-t-sm" style="height: 94%"></div>
+                      <div class="w-full bg-macos-warning/80 rounded-b-sm" style="height: 6%"></div>
+                      <span class="text-xs text-macos-text-secondary mt-2">16:00</span>
+                    </div>
+                    <div class="flex flex-col items-center justify-end h-40 w-8">
+                      <div class="w-full bg-macos-success/80 rounded-t-sm" style="height: 92%"></div>
+                      <div class="w-full bg-macos-warning/80 rounded-b-sm" style="height: 8%"></div>
+                      <span class="text-xs text-macos-text-secondary mt-2">20:00</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 健康度分布 -->
+            <div class="card p-6">
+              <h3 class="text-lg font-semibold text-macos-text mb-4">健康度分布</h3>
+              <div class="h-64 flex flex-col">
+                <div class="flex-1 flex items-center justify-center">
+                  <div class="relative w-40 h-40">
+                    <svg viewBox="0 0 100 100" class="transform -rotate-90">
+                      <circle cx="50" cy="50" r="40" fill="none" stroke="#30D158" stroke-width="20" stroke-dasharray="181 251" />
+                      <circle cx="50" cy="50" r="40" fill="none" stroke="#FFD60A" stroke-width="20" stroke-dasharray="45 251" stroke-dashoffset="-181" />
+                      <circle cx="50" cy="50" r="40" fill="none" stroke="#FF9F0A" stroke-width="20" stroke-dasharray="20 251" stroke-dashoffset="-226" />
+                      <circle cx="50" cy="50" r="40" fill="none" stroke="#FF453A" stroke-width="20" stroke-dasharray="5 251" stroke-dashoffset="-246" />
+                      <circle cx="50" cy="50" r="25" fill="#2C2C2E" />
+                    </svg>
+                    <div class="absolute inset-0 flex flex-col items-center justify-center">
+                      <span class="text-2xl font-bold text-macos-text">256</span>
+                      <span class="text-xs text-macos-text-secondary">设备总数</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-2">
+                      <span class="w-3 h-3 rounded-full bg-macos-success"></span>
+                      <span class="text-sm text-macos-text-secondary">健康</span>
+                    </div>
+                    <span class="text-sm font-semibold text-macos-text">184台</span>
+                  </div>
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-2">
+                      <span class="w-3 h-3 rounded-full bg-macos-warning"></span>
+                      <span class="text-sm text-macos-text-secondary">亚健康</span>
+                    </div>
+                    <span class="text-sm font-semibold text-macos-text">46台</span>
+                  </div>
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-2">
+                      <span class="w-3 h-3 rounded-full bg-orange-500"></span>
+                      <span class="text-sm text-macos-text-secondary">异常</span>
+                    </div>
+                    <span class="text-sm font-semibold text-macos-text">20台</span>
+                  </div>
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-2">
+                      <span class="w-3 h-3 rounded-full bg-macos-error"></span>
+                      <span class="text-sm text-macos-text-secondary">故障</span>
+                    </div>
+                    <span class="text-sm font-semibold text-macos-text">6台</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 最近告警 -->
+          <div class="grid grid-cols-3 gap-6">
+            <div class="card col-span-2 p-6">
+              <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold text-macos-text">最近告警</h3>
+                <button class="text-sm text-macos-accent hover:underline">查看全部 →</button>
+              </div>
+              <div class="space-y-3">
+                <div class="flex items-center justify-between p-4 rounded-lg bg-macos-bg border border-macos-border hover:border-macos-accent/50 transition-smooth cursor-pointer">
+                  <div class="flex items-center space-x-4">
+                    <span class="px-2 py-1 rounded text-xs font-medium border status-warning">预警</span>
+                    <div>
+                      <p class="text-sm font-medium text-macos-text">#1输煤皮带</p>
+                      <p class="text-xs text-macos-text-secondary">温度异常</p>
+                    </div>
+                  </div>
+                  <div class="flex items-center space-x-6">
+                    <div class="text-right">
+                      <p class="text-sm font-medium text-macos-text">65°C / 60°C</p>
+                      <p class="text-xs text-macos-text-secondary">10:32:15</p>
+                    </div>
+                    <button class="btn-primary text-xs">处理</button>
+                  </div>
+                </div>
+                <div class="flex items-center justify-between p-4 rounded-lg bg-macos-bg border border-macos-border hover:border-macos-accent/50 transition-smooth cursor-pointer">
+                  <div class="flex items-center space-x-4">
+                    <span class="px-2 py-1 rounded text-xs font-medium border status-error">紧急</span>
+                    <div>
+                      <p class="text-sm font-medium text-macos-text">#2引风机轴承</p>
+                      <p class="text-xs text-macos-text-secondary">振动超标</p>
+                    </div>
+                  </div>
+                  <div class="flex items-center space-x-6">
+                    <div class="text-right">
+                      <p class="text-sm font-medium text-macos-text">8.5 / 6.0 mm/s</p>
+                      <p class="text-xs text-macos-text-secondary">10:28:42</p>
+                    </div>
+                    <button class="btn-primary text-xs">处理</button>
+                  </div>
+                </div>
+                <div class="flex items-center justify-between p-4 rounded-lg bg-macos-bg border border-macos-border hover:border-macos-accent/50 transition-smooth cursor-pointer">
+                  <div class="flex items-center space-x-4">
+                    <span class="px-2 py-1 rounded text-xs font-medium border status-warning">告警</span>
+                    <div>
+                      <p class="text-sm font-medium text-macos-text">煤场A区</p>
+                      <p class="text-xs text-macos-text-secondary">CO浓度</p>
+                    </div>
+                  </div>
+                  <div class="flex items-center space-x-6">
+                    <div class="text-right">
+                      <p class="text-sm font-medium text-macos-text">85ppm / 50ppm</p>
+                      <p class="text-xs text-macos-text-secondary">10:15:33</p>
+                    </div>
+                    <button class="btn-primary text-xs">处理</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 快捷操作 -->
+            <div class="card p-6">
+              <h3 class="text-lg font-semibold text-macos-text mb-4">快捷操作</h3>
+              <div class="grid grid-cols-2 gap-3">
+                <button class="flex flex-col items-center justify-center p-4 rounded-lg bg-macos-bg hover:bg-macos-accent/10 border border-macos-border hover:border-macos-accent transition-smooth btn-hover">
+                  <svg class="w-5 h-5 text-macos-accent mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                  </svg>
+                  <span class="text-sm text-macos-text">实时监控</span>
+                </button>
+                <button class="flex flex-col items-center justify-center p-4 rounded-lg bg-macos-bg hover:bg-macos-accent/10 border border-macos-border hover:border-macos-accent transition-smooth btn-hover">
+                  <svg class="w-5 h-5 text-macos-accent mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                  </svg>
+                  <span class="text-sm text-macos-text">告警确认</span>
+                </button>
+                <button class="flex flex-col items-center justify-center p-4 rounded-lg bg-macos-bg hover:bg-macos-accent/10 border border-macos-border hover:border-macos-accent transition-smooth btn-hover">
+                  <svg class="w-5 h-5 text-macos-accent mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                  </svg>
+                  <span class="text-sm text-macos-text">工单处理</span>
+                </button>
+                <button class="flex flex-col items-center justify-center p-4 rounded-lg bg-macos-bg hover:bg-macos-accent/10 border border-macos-border hover:border-macos-accent transition-smooth btn-hover">
+                  <svg class="w-5 h-5 text-macos-accent mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                  </svg>
+                  <span class="text-sm text-macos-text">历史查询</span>
+                </button>
+                <button class="flex flex-col items-center justify-center p-4 rounded-lg bg-macos-bg hover:bg-macos-accent/10 border border-macos-border hover:border-macos-accent transition-smooth btn-hover">
+                  <svg class="w-5 h-5 text-macos-accent mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                  </svg>
+                  <span class="text-sm text-macos-text">温度报表</span>
+                </button>
+                <button class="flex flex-col items-center justify-center p-4 rounded-lg bg-macos-bg hover:bg-macos-accent/10 border border-macos-border hover:border-macos-accent transition-smooth btn-hover">
+                  <span class="text-macos-accent mb-2 text-xl">📊</span>
+                  <span class="text-sm text-macos-text">数据分析</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 设备监测内容 (默认隐藏) -->
+        <div id="devices-content" class="hidden space-y-6">
+          <div>
+            <h1 class="text-2xl font-bold text-macos-text">设备监测</h1>
+            <p class="text-macos-text-secondary mt-1">实时监控各类设备运行状态</p>
+          </div>
+          <div class="card p-6">
+            <table class="w-full">
+              <thead>
+                <tr class="border-b border-macos-border">
+                  <th class="px-6 py-4 text-left text-xs font-medium text-macos-text-secondary uppercase">设备名称</th>
+                  <th class="px-6 py-4 text-left text-xs font-medium text-macos-text-secondary uppercase">状态</th>
+                  <th class="px-6 py-4 text-left text-xs font-medium text-macos-text-secondary uppercase">温度</th>
+                  <th class="px-6 py-4 text-left text-xs font-medium text-macos-text-secondary uppercase">健康度</th>
+                  <th class="px-6 py-4 text-left text-xs font-medium text-macos-text-secondary uppercase">位置</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-macos-border">
+                <tr class="hover:bg-macos-bg/50 transition-smooth">
+                  <td class="px-6 py-4">
+                    <div class="flex items-center space-x-3">
+                      <div class="w-10 h-10 rounded-lg bg-macos-accent/10 flex items-center justify-center">
+                        <svg class="text-macos-accent w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                        </svg>
+                      </div>
+                      <span class="text-sm font-medium text-macos-text">#1输煤皮带电机</span>
+                    </div>
+                  </td>
+                  <td class="px-6 py-4"><span class="px-2.5 py-1 rounded-full text-xs font-medium border status-success">正常</span></td>
+                  <td class="px-6 py-4"><span class="text-sm font-medium text-macos-text">45°C</span></td>
+                  <td class="px-6 py-4">
+                    <div class="flex items-center space-x-2">
+                      <div class="w-20 h-2 bg-macos-bg rounded-full overflow-hidden">
+                        <div class="w-[95%] h-full bg-macos-success rounded-full"></div>
+                      </div>
+                      <span class="text-sm font-medium text-macos-success">95%</span>
+                    </div>
+                  </td>
+                  <td class="px-6 py-4"><span class="text-sm text-macos-text-secondary">输煤廊道A区</span></td>
+                </tr>
+                <tr class="hover:bg-macos-bg/50 transition-smooth">
+                  <td class="px-6 py-4">
+                    <div class="flex items-center space-x-3">
+                      <div class="w-10 h-10 rounded-lg bg-macos-accent/10 flex items-center justify-center">
+                        <svg class="text-macos-accent w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                        </svg>
+                      </div>
+                      <span class="text-sm font-medium text-macos-text">碎煤机A</span>
+                    </div>
+                  </td>
+                  <td class="px-6 py-4"><span class="px-2.5 py-1 rounded-full text-xs font-medium border status-error">异常</span></td>
+                  <td class="px-6 py-4"><span class="text-sm font-medium text-macos-error">85°C</span></td>
+                  <td class="px-6 py-4">
+                    <div class="flex items-center space-x-2">
+                      <div class="w-20 h-2 bg-macos-bg rounded-full overflow-hidden">
+                        <div class="w-[45%] h-full bg-macos-error rounded-full"></div>
+                      </div>
+                      <span class="text-sm font-medium text-macos-error">45%</span>
+                    </div>
+                  </td>
+                  <td class="px-6 py-4"><span class="text-sm text-macos-text-secondary">碎煤机室</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- 告警中心内容 (默认隐藏) -->
+        <div id="alarms-content" class="hidden space-y-6">
+          <div>
+            <h1 class="text-2xl font-bold text-macos-text">告警中心</h1>
+            <p class="text-macos-text-secondary mt-1">集中管理所有设备告警信息</p>
+          </div>
+          <div class="space-y-4">
+            <div class="card p-5">
+              <div class="flex items-start justify-between">
+                <div class="flex items-start space-x-4">
+                  <div class="p-3 rounded-xl border status-error">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                  </div>
+                  <div class="flex-1">
+                    <div class="flex items-center space-x-3 mb-2">
+                      <h3 class="font-semibold text-macos-text">#2引风机轴承</h3>
+                      <span class="px-2 py-0.5 rounded-full text-xs font-medium border status-error">紧急</span>
+                      <span class="px-2 py-0.5 rounded-full text-xs font-medium status-error">待处理</span>
+                    </div>
+                    <p class="text-macos-text-secondary mb-3">振动严重超标</p>
+                    <div class="flex items-center space-x-6 text-sm">
+                      <span class="text-macos-text-secondary">当前值：<span class="font-semibold text-macos-error">8.5 mm/s</span> / 阈值：6.0 mm/s</span>
+                      <span class="text-macos-text-secondary">时间：2024-01-15 10:28:42</span>
+                    </div>
+                  </div>
+                </div>
+                <button class="btn-primary">接单处理</button>
+              </div>
+            </div>
+            <div class="card p-5">
+              <div class="flex items-start justify-between">
+                <div class="flex items-start space-x-4">
+                  <div class="p-3 rounded-xl border status-warning">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                    </svg>
+                  </div>
+                  <div class="flex-1">
+                    <div class="flex items-center space-x-3 mb-2">
+                      <h3 class="font-semibold text-macos-text">煤场A区 CO浓度</h3>
+                      <span class="px-2 py-0.5 rounded-full text-xs font-medium border status-warning">告警</span>
+                      <span class="px-2 py-0.5 rounded-full text-xs font-medium status-warning">处理中</span>
+                    </div>
+                    <p class="text-macos-text-secondary mb-3">CO浓度超标预警</p>
+                    <div class="flex items-center space-x-6 text-sm">
+                      <span class="text-macos-text-secondary">当前值：<span class="font-semibold text-macos-warning">85 ppm</span> / 阈值：50 ppm</span>
+                      <span class="text-macos-text-secondary">时间：2024-01-15 10:15:33</span>
+                    </div>
+                  </div>
+                </div>
+                <button class="px-4 py-2 bg-macos-success text-white rounded-lg text-sm font-medium hover:opacity-90 transition-smooth">标记完成</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 资产管理内容 (默认隐藏) -->
+        <div id="assets-content" class="hidden space-y-6">
+          <div>
+            <h1 class="text-2xl font-bold text-macos-text">资产管理</h1>
+            <p class="text-macos-text-secondary mt-1">全生命周期资产管理与健康度评估</p>
+          </div>
+          <div class="grid grid-cols-2 gap-6">
+            <div class="card p-6">
+              <div class="flex items-start justify-between mb-4">
+                <div class="flex items-center space-x-4">
+                  <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center">
+                    <svg class="text-white w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 class="font-semibold text-macos-text text-lg">#1汽轮机</h3>
+                    <p class="text-sm text-macos-text-secondary">型号：N300-16.7/537/537</p>
+                  </div>
+                </div>
+                <span class="px-3 py-1 rounded-full text-xs font-medium border status-success">健康</span>
+              </div>
+              <div class="grid grid-cols-2 gap-4 mb-4">
+                <div class="flex items-center space-x-3">
+                  <svg class="text-macos-text-secondary w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                  </svg>
+                  <div>
+                    <p class="text-xs text-macos-text-secondary">安装日期</p>
+                    <p class="text-sm font-medium text-macos-text">2018-06-15</p>
+                  </div>
+                </div>
+                <div class="flex items-center space-x-3">
+                  <div class="w-10 h-10 rounded-full flex items-center justify-center bg-macos-success/20">
+                    <span class="text-sm font-bold text-macos-success">92</span>
+                  </div>
+                  <div>
+                    <p class="text-xs text-macos-text-secondary">健康评分</p>
+                    <p class="text-sm font-medium text-macos-success">92/100</p>
+                  </div>
+                </div>
+              </div>
+              <div class="pt-4 border-t border-macos-border">
+                <p class="text-xs text-macos-text-secondary">生产厂家</p>
+                <p class="text-sm text-macos-text">上海电气</p>
+              </div>
+            </div>
+            <div class="card p-6">
+              <div class="flex items-start justify-between mb-4">
+                <div class="flex items-center space-x-4">
+                  <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center">
+                    <svg class="text-white w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 class="font-semibold text-macos-text text-lg">碎煤机A</h3>
+                    <p class="text-sm text-macos-text-secondary">型号：HCSC-8</p>
+                  </div>
+                </div>
+                <span class="px-3 py-1 rounded-full text-xs font-medium border status-error">故障</span>
+              </div>
+              <div class="grid grid-cols-2 gap-4 mb-4">
+                <div class="flex items-center space-x-3">
+                  <svg class="text-macos-text-secondary w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                  </svg>
+                  <div>
+                    <p class="text-xs text-macos-text-secondary">安装日期</p>
+                    <p class="text-sm font-medium text-macos-text">2020-01-05</p>
+                  </div>
+                </div>
+                <div class="flex items-center space-x-3">
+                  <div class="w-10 h-10 rounded-full flex items-center justify-center bg-macos-error/20">
+                    <span class="text-sm font-bold text-macos-error">45</span>
+                  </div>
+                  <div>
+                    <p class="text-xs text-macos-text-secondary">健康评分</p>
+                    <p class="text-sm font-medium text-macos-error">45/100</p>
+                  </div>
+                </div>
+              </div>
+              <div class="pt-4 border-t border-macos-border">
+                <p class="text-xs text-macos-text-secondary">生产厂家</p>
+                <p class="text-sm text-macos-text">上海建设路桥</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script>
+    // 更新时间
+    function updateTime() {
+      const now = new Date();
+      const timeStr = now.toLocaleString('zh-CN', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+      });
+      document.getElementById('currentTime').textContent = timeStr;
+    }
+    updateTime();
+    setInterval(updateTime, 1000);
+
+    // 切换标签页
+    function switchTab(tab) {
+      // 隐藏所有内容
+      document.querySelectorAll('[id$="-content"]').forEach(el => {
+        el.classList.add('hidden');
+      });
+      
+      // 显示选中内容
+      const contentEl = document.getElementById(tab + '-content');
+      if (contentEl) {
+        contentEl.classList.remove('hidden');
+      }
+
+      // 更新菜单状态
+      document.querySelectorAll('.menu-item').forEach(el => {
+        el.classList.remove('active');
+        el.classList.add('text-macos-text-secondary');
+      });
+      
+      event.currentTarget.classList.add('active');
+      event.currentTarget.classList.remove('text-macos-text-secondary');
+    }
+
+    // 初始化驾驶舱为活动状态
+    document.querySelector('.menu-item').classList.add('active');
+  </script>
+</body>
+</html>
