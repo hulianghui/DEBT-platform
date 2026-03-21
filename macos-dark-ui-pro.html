@@ -1,4 +1,4 @@
-﻿﻿<!DOCTYPE html>
+﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿<!DOCTYPE html>
 <html lang="zh-CN" class="dark">
 <head>
   <meta charset="UTF-8">
@@ -21,7 +21,91 @@
       color: #FFFFFF;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
+    }
+
+    .app-container {
+      display: flex;
+      min-height: 100vh;
+      max-height: 100vh;
       overflow: hidden;
+    }
+
+    .sidebar {
+      width: 256px;
+      min-width: 256px;
+      background: linear-gradient(180deg, #2C2C2C 0%, #1E1E1E 100%);
+      border-right: 1px solid #38383A;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+
+    .main-content {
+      flex: 1;
+      overflow-y: auto;
+      overflow-x: hidden;
+      min-width: 0;
+    }
+
+    @media (max-width: 1024px) {
+      .sidebar {
+        width: 64px;
+        min-width: 64px;
+      }
+      .sidebar span:not(.px-2) {
+        display: none;
+      }
+      .sidebar .text-xs {
+        display: none;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        position: fixed;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        z-index: 50;
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+      }
+      .sidebar.open {
+        transform: translateX(0);
+      }
+      .mobile-menu-btn {
+        display: flex !important;
+      }
+    }
+
+    .grid-cols-6 {
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+    }
+
+    @media (max-width: 1280px) {
+      .grid-cols-6 {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 768px) {
+      .grid-cols-6,
+      .grid-cols-5,
+      .grid-cols-4 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .grid-cols-3 {
+        grid-template-columns: repeat(1, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 480px) {
+      .grid-cols-6,
+      .grid-cols-5,
+      .grid-cols-4 {
+        grid-template-columns: repeat(1, minmax(0, 1fr));
+      }
     }
 
     .mono {
@@ -74,10 +158,7 @@
       animation: pulse-dot 2s ease-in-out infinite;
     }
 
-    .sidebar {
-      background: linear-gradient(180deg, #2C2C2C 0%, #1E1E1E 100%);
-      border-right: 1px solid #38383A;
-    }
+
 
     .menu-item {
       display: flex;
@@ -308,8 +389,8 @@
     </div>
   </div>
 
-  <div class="flex h-screen">
-    <aside class="sidebar w-64 flex flex-col">
+  <div class="app-container">
+    <aside class="sidebar" id="sidebar">
       <div class="h-16 flex items-center px-5 border-b border-[#38383A]">
         <div class="flex items-center space-x-3">
           <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-[#0A84FF] to-blue-600 flex items-center justify-center shadow-lg">
@@ -334,6 +415,14 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"></path>
           </svg>
           <span class="text-sm font-medium">驾驶舱</span>
+        </div>
+
+        <div class="menu-item" onclick="switchView('dashboard-evo')">
+          <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+          </svg>
+          <span class="text-sm font-medium">驾驶舱进化</span>
+          <span class="ml-auto px-2 py-0.5 text-xs bg-[#30D158]/20 text-[#30D158] rounded-full">NEW</span>
         </div>
 
         <div class="px-3 mt-5 mb-2">
@@ -424,9 +513,14 @@
       </div>
     </aside>
 
-    <div class="flex-1 flex flex-col overflow-hidden">
+    <div class="main-content">
       <header class="h-16 bg-[#2C2C2C] border-b border-[#38383A] flex items-center justify-between px-6">
-        <div class="flex items-center space-x-6">
+        <div class="flex items-center space-x-4">
+          <button class="mobile-menu-btn hidden p-2 rounded-lg hover:bg-[#3A3A3C]" onclick="toggleSidebar()">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+            </svg>
+          </button>
           <h1 class="text-lg font-semibold text-white" id="page-title">驾驶舱</h1>
           <div class="h-6 w-px bg-[#38383A]"></div>
           <div class="flex items-center space-x-2">
@@ -732,6 +826,466 @@
                     <p class="text-xs text-[#98989D]">剩余 3天</p>
                     <p class="text-xs text-[#98989D] mt-1">王五</p>
                   </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="view-dashboard-evo" class="hidden space-y-6">
+          <div class="grid grid-cols-6 gap-4">
+            <div class="card p-5">
+              <div class="flex items-start justify-between">
+                <div>
+                  <p class="text-sm text-[#98989D] mb-2">设备健康度</p>
+                  <div class="flex items-baseline space-x-1">
+                    <span class="text-4xl font-bold mono text-white">92.5</span>
+                    <span class="text-lg text-[#98989D]">%</span>
+                  </div>
+                  <div class="flex items-center space-x-1 mt-2">
+                    <svg class="w-4 h-4 text-[#30D158]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
+                    </svg>
+                    <span class="text-xs text-[#30D158]">+1.2% 较上周</span>
+                  </div>
+                </div>
+                <div class="relative">
+                  <svg class="w-20 h-20 progress-ring" viewBox="0 0 36 36">
+                    <circle cx="18" cy="18" r="15.9" fill="none" stroke="#3A3A3C" stroke-width="3"/>
+                    <circle cx="18" cy="18" r="15.9" fill="none" stroke="#30D158" stroke-width="3" stroke-linecap="round" stroke-dasharray="100" stroke-dashoffset="7.5"/>
+                  </svg>
+                  <span class="absolute inset-0 flex items-center justify-center text-sm font-semibold text-[#30D158]">优</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="card p-5">
+              <div class="flex items-start justify-between">
+                <div>
+                  <p class="text-sm text-[#98989D] mb-2">在线设备</p>
+                  <div class="flex items-baseline space-x-1">
+                    <span class="text-4xl font-bold mono text-white">247</span>
+                    <span class="text-lg text-[#98989D]">/256</span>
+                  </div>
+                  <div class="w-full bg-[#3A3A3C] rounded-full h-2 mt-3">
+                    <div class="bg-[#30D158] h-2 rounded-full" style="width: 96.5%"></div>
+                  </div>
+                  <p class="text-xs text-[#98989D] mt-1">在线率 96.5%</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="card p-5">
+              <p class="text-sm text-[#98989D] mb-3">三级预警分布</p>
+              <div class="space-y-2">
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center space-x-2">
+                    <span class="w-3 h-3 rounded-full bg-[#FF3B30]"></span>
+                    <span class="text-xs text-[#98989D]">严重</span>
+                  </div>
+                  <span class="text-sm font-semibold mono text-white">6</span>
+                </div>
+                <div class="w-full h-2 bg-[#3A3A3C] rounded-full overflow-hidden">
+                  <div class="h-full bg-[#FF3B30] rounded-full" style="width: 2.3%"></div>
+                </div>
+                <div class="flex items-center justify-between mt-2">
+                  <div class="flex items-center space-x-2">
+                    <span class="w-3 h-3 rounded-full bg-[#FF9F0A]"></span>
+                    <span class="text-xs text-[#98989D]">警告</span>
+                  </div>
+                  <span class="text-sm font-semibold mono text-white">20</span>
+                </div>
+                <div class="w-full h-2 bg-[#3A3A3C] rounded-full overflow-hidden">
+                  <div class="h-full bg-[#FF9F0A] rounded-full" style="width: 7.8%"></div>
+                </div>
+                <div class="flex items-center justify-between mt-2">
+                  <div class="flex items-center space-x-2">
+                    <span class="w-3 h-3 rounded-full bg-[#64D2FF]"></span>
+                    <span class="text-xs text-[#98989D]">注意</span>
+                  </div>
+                  <span class="text-sm font-semibold mono text-white">46</span>
+                </div>
+                <div class="w-full h-2 bg-[#3A3A3C] rounded-full overflow-hidden">
+                  <div class="h-full bg-[#64D2FF] rounded-full" style="width: 18%"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card p-5">
+              <p class="text-sm text-[#98989D] mb-3">RUL预警（30天内）</p>
+              <div class="space-y-2">
+                <div class="flex items-center justify-between p-2 rounded bg-[#FF3B30]/10">
+                  <span class="text-sm text-white">#2引风机轴承</span>
+                  <span class="text-sm font-semibold mono text-[#FF3B30]">8天</span>
+                </div>
+                <div class="flex items-center justify-between p-2 rounded bg-[#FF9F0A]/10">
+                  <span class="text-sm text-white">#1汽轮机轴瓦</span>
+                  <span class="text-sm font-semibold mono text-[#FF9F0A]">15天</span>
+                </div>
+                <div class="flex items-center justify-between p-2 rounded bg-[#64D2FF]/10">
+                  <span class="text-sm text-white">#3给水泵轴承</span>
+                  <span class="text-sm font-semibold mono text-[#64D2FF]">22天</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="card p-5">
+              <p class="text-sm text-[#98989D] mb-3">本月维保计划</p>
+              <div class="flex items-center justify-between mb-3">
+                <span class="text-3xl font-bold mono text-white">85%</span>
+                <span class="text-xs text-[#98989D]">51/60完成</span>
+              </div>
+              <div class="w-full bg-[#3A3A3C] rounded-full h-2">
+                <div class="bg-[#30D158] h-2 rounded-full" style="width: 85%"></div>
+              </div>
+              <div class="flex items-center justify-between mt-2">
+                <span class="text-xs text-[#98989D]">待执行: 9</span>
+                <span class="text-xs text-[#FF9F0A]">逾期: 2</span>
+              </div>
+            </div>
+
+            <div class="card p-5">
+              <p class="text-sm text-[#98989D] mb-3">皮带运行状态</p>
+              <div class="space-y-2">
+                <div class="flex items-center justify-between p-2 rounded bg-[#30D158]/10">
+                  <span class="text-sm text-white">运行中</span>
+                  <span class="text-sm font-semibold mono text-[#30D158]">4条</span>
+                </div>
+                <div class="flex items-center justify-between p-2 rounded bg-[#FF9F0A]/10">
+                  <span class="text-sm text-white">低速/备线</span>
+                  <span class="text-sm font-semibold mono text-[#FF9F0A]">1条</span>
+                </div>
+                <div class="flex items-center justify-between p-2 rounded bg-[#3A3A3C]/50">
+                  <span class="text-sm text-[#98989D]">停机</span>
+                  <span class="text-sm font-semibold mono text-[#98989D]">1条</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-4 gap-5">
+            <div class="card p-5 col-span-2">
+              <div class="flex items-center justify-between mb-4">
+                <h3 class="font-semibold text-white">关键设备温振监测</h3>
+                <select class="input-field w-32 text-sm py-1">
+                  <option>全部设备</option>
+                </select>
+              </div>
+              <div class="grid grid-cols-4 gap-4">
+                <div class="text-center">
+                  <div class="relative inline-block">
+                    <svg class="w-16 h-16" viewBox="0 0 36 36">
+                      <circle cx="18" cy="18" r="15.5" fill="none" stroke="#3A3A3C" stroke-width="3"/>
+                      <circle cx="18" cy="18" r="15.5" fill="none" stroke="#30D158" stroke-width="3" stroke-linecap="round" stroke-dasharray="97.4" stroke-dashoffset="14.6"/>
+                    </svg>
+                    <div class="absolute inset-0 flex flex-col items-center justify-center -mt-1">
+                      <span class="text-lg font-bold mono text-white">62</span>
+                      <span class="text-xs text-[#98989D]">°C</span>
+                    </div>
+                  </div>
+                  <p class="text-xs text-white mt-2">#1汽轮机</p>
+                  <p class="text-xs text-[#30D158]">正常</p>
+                </div>
+                <div class="text-center">
+                  <div class="relative inline-block">
+                    <svg class="w-16 h-16" viewBox="0 0 36 36">
+                      <circle cx="18" cy="18" r="15.5" fill="none" stroke="#3A3A3C" stroke-width="3"/>
+                      <circle cx="18" cy="18" r="15.5" fill="none" stroke="#30D158" stroke-width="3" stroke-linecap="round" stroke-dasharray="97.4" stroke-dashoffset="19.5"/>
+                    </svg>
+                    <div class="absolute inset-0 flex flex-col items-center justify-center -mt-1">
+                      <span class="text-lg font-bold mono text-white">58</span>
+                      <span class="text-xs text-[#98989D]">°C</span>
+                    </div>
+                  </div>
+                  <p class="text-xs text-white mt-2">#1发电机</p>
+                  <p class="text-xs text-[#30D158]">正常</p>
+                </div>
+                <div class="text-center">
+                  <div class="relative inline-block">
+                    <svg class="w-16 h-16" viewBox="0 0 36 36">
+                      <circle cx="18" cy="18" r="15.5" fill="none" stroke="#3A3A3C" stroke-width="3"/>
+                      <circle cx="18" cy="18" r="15.5" fill="none" stroke="#FF9F0A" stroke-width="3" stroke-linecap="round" stroke-dasharray="97.4" stroke-dashoffset="29.2"/>
+                    </svg>
+                    <div class="absolute inset-0 flex flex-col items-center justify-center -mt-1">
+                      <span class="text-lg font-bold mono text-white">78</span>
+                      <span class="text-xs text-[#98989D]">°C</span>
+                    </div>
+                  </div>
+                  <p class="text-xs text-white mt-2">#1主变</p>
+                  <p class="text-xs text-[#FF9F0A]">注意</p>
+                </div>
+                <div class="text-center">
+                  <div class="relative inline-block">
+                    <svg class="w-16 h-16" viewBox="0 0 36 36">
+                      <circle cx="18" cy="18" r="15.5" fill="none" stroke="#3A3A3C" stroke-width="3"/>
+                      <circle cx="18" cy="18" r="15.5" fill="none" stroke="#30D158" stroke-width="3" stroke-linecap="round" stroke-dasharray="97.4" stroke-dashoffset="24.4"/>
+                    </svg>
+                    <div class="absolute inset-0 flex flex-col items-center justify-center -mt-1">
+                      <span class="text-lg font-bold mono text-white">65</span>
+                      <span class="text-xs text-[#98989D]">°C</span>
+                    </div>
+                  </div>
+                  <p class="text-xs text-white mt-2">#1锅炉</p>
+                  <p class="text-xs text-[#30D158]">正常</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="card p-5 col-span-2">
+              <div class="flex items-center justify-between mb-4">
+                <h3 class="font-semibold text-white">设备健康度趋势</h3>
+                <div class="flex items-center space-x-2">
+                  <button class="tab-item active text-xs">7天</button>
+                  <button class="tab-item text-xs">30天</button>
+                  <button class="tab-item text-xs">90天</button>
+                </div>
+              </div>
+              <div class="h-40">
+                <canvas id="healthTrendChart"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-4 gap-5">
+            <div class="card p-5">
+              <h3 class="font-semibold text-white mb-4">设备分类统计</h3>
+              <div class="space-y-3">
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center space-x-2">
+                    <span class="w-3 h-3 rounded-full bg-[#0A84FF]"></span>
+                    <span class="text-sm text-[#98989D]">风机类</span>
+                  </div>
+                  <span class="text-sm font-semibold mono">42台</span>
+                </div>
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center space-x-2">
+                    <span class="w-3 h-3 rounded-full bg-[#30D158]"></span>
+                    <span class="text-sm text-[#98989D]">泵类</span>
+                  </div>
+                  <span class="text-sm font-semibold mono">58台</span>
+                </div>
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center space-x-2">
+                    <span class="w-3 h-3 rounded-full bg-[#FF9F0A]"></span>
+                    <span class="text-sm text-[#98989D]">电机类</span>
+                  </div>
+                  <span class="text-sm font-semibold mono">76台</span>
+                </div>
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center space-x-2">
+                    <span class="w-3 h-3 rounded-full bg-[#5856D6]"></span>
+                    <span class="text-sm text-[#98989D]">开关柜</span>
+                  </div>
+                  <span class="text-sm font-semibold mono">35台</span>
+                </div>
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center space-x-2">
+                    <span class="w-3 h-3 rounded-full bg-[#FF3B30]"></span>
+                    <span class="text-sm text-[#98989D]">变压器</span>
+                  </div>
+                  <span class="text-sm font-semibold mono">12台</span>
+                </div>
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center space-x-2">
+                    <span class="w-3 h-3 rounded-full bg-[#64D2FF]"></span>
+                    <span class="text-sm text-[#98989D]">其他</span>
+                  </div>
+                  <span class="text-sm font-semibold mono">33台</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="card p-5">
+              <div class="flex items-center justify-between mb-4">
+                <h3 class="font-semibold text-white">30天报警趋势</h3>
+                <span class="text-xs text-[#30D158]">↓ 12%</span>
+              </div>
+              <div class="h-44">
+                <canvas id="alarmTrendChart"></canvas>
+              </div>
+            </div>
+
+            <div class="card p-5">
+              <h3 class="font-semibold text-white mb-4">环境气体监测</h3>
+              <div class="grid grid-cols-2 gap-3">
+                <div class="text-center p-2 rounded-lg bg-[#30D158]/10">
+                  <span class="text-2xl font-bold mono text-[#30D158]">0.8</span>
+                  <p class="text-xs text-[#98989D]">CO (ppm)</p>
+                  <span class="text-xs text-[#30D158]">正常</span>
+                </div>
+                <div class="text-center p-2 rounded-lg bg-[#30D158]/10">
+                  <span class="text-2xl font-bold mono text-[#30D158]">12</span>
+                  <p class="text-xs text-[#98989D]">O₂ (%)</p>
+                  <span class="text-xs text-[#30D158]">正常</span>
+                </div>
+                <div class="text-center p-2 rounded-lg bg-[#FF9F0A]/10">
+                  <span class="text-2xl font-bold mono text-[#FF9F0A]">15</span>
+                  <p class="text-xs text-[#98989D]">CH₄ (ppm)</p>
+                  <span class="text-xs text-[#FF9F0A]">注意</span>
+                </div>
+                <div class="text-center p-2 rounded-lg bg-[#30D158]/10">
+                  <span class="text-2xl font-bold mono text-[#30D158]">2</span>
+                  <p class="text-xs text-[#98989D]">H₂S (ppm)</p>
+                  <span class="text-xs text-[#30D158]">正常</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="card p-5 col-span-2">
+              <div class="flex items-center justify-between mb-4">
+                <h3 class="font-semibold text-white">重点关注设备</h3>
+                <span class="text-xs text-[#98989D]">健康度 &lt; 70%</span>
+              </div>
+              <div class="grid grid-cols-2 gap-3">
+                <div class="bg-gradient-to-br from-[#1C1C1E] to-[#2C2C2E] border border-[#38383A] rounded-xl p-4 hover:border-[#FF3B30] transition-all">
+                  <div class="flex items-start justify-between mb-2">
+                    <div>
+                      <p class="text-sm font-medium text-white">#2引风机</p>
+                      <p class="text-xs text-[#98989D]">轴承振动超标</p>
+                    </div>
+                    <span class="px-2 py-0.5 text-xs rounded bg-[#FF3B30]/20 text-[#FF3B30]">严重</span>
+                  </div>
+                  <div class="flex items-center justify-between mt-2">
+                    <div class="flex items-center space-x-2">
+                      <span class="text-lg font-bold mono text-[#FF3B30]">58</span>
+                      <span class="text-xs text-[#98989D]">健康度%</span>
+                    </div>
+                    <span class="text-xs text-[#98989D]">RUL: 8天</span>
+                  </div>
+                </div>
+                <div class="bg-gradient-to-br from-[#1C1C1E] to-[#2C2C2E] border border-[#38383A] rounded-xl p-4 hover:border-[#FF9F0A] transition-all">
+                  <div class="flex items-start justify-between mb-2">
+                    <div>
+                      <p class="text-sm font-medium text-white">#1主变压器</p>
+                      <p class="text-xs text-[#98989D]">温度偏高</p>
+                    </div>
+                    <span class="px-2 py-0.5 text-xs rounded bg-[#FF9F0A]/20 text-[#FF9F0A]">警告</span>
+                  </div>
+                  <div class="flex items-center justify-between mt-2">
+                    <div class="flex items-center space-x-2">
+                      <span class="text-lg font-bold mono text-[#FF9F0A]">65</span>
+                      <span class="text-xs text-[#98989D]">健康度%</span>
+                    </div>
+                    <span class="text-xs text-[#98989D]">RUL: 45天</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-3 gap-5">
+            <div class="card p-5">
+              <div class="flex items-center justify-between mb-4">
+                <h3 class="font-semibold text-white">实时报警</h3>
+                <button class="text-xs text-[#0A84FF] hover:underline">查看全部</button>
+              </div>
+              <div class="space-y-2">
+                <div class="flex items-center justify-between p-2 rounded-lg bg-[#FF3B30]/10 border border-[#FF3B30]/20">
+                  <div class="flex items-center space-x-2">
+                    <span class="status-dot status-error"></span>
+                    <span class="text-sm text-white">#2引风机轴承</span>
+                  </div>
+                  <span class="text-xs text-[#FF3B30]">严重</span>
+                </div>
+                <div class="flex items-center justify-between p-2 rounded-lg bg-[#FF3B30]/10 border border-[#FF3B30]/20">
+                  <div class="flex items-center space-x-2">
+                    <span class="status-dot status-error"></span>
+                    <span class="text-sm text-white">#1主变温度</span>
+                  </div>
+                  <span class="text-xs text-[#FF3B30]">严重</span>
+                </div>
+                <div class="flex items-center justify-between p-2 rounded-lg bg-[#FF9F0A]/10 border border-[#FF9F0A]/20">
+                  <div class="flex items-center space-x-2">
+                    <span class="status-dot status-warning"></span>
+                    <span class="text-sm text-white">煤场A区 CO</span>
+                  </div>
+                  <span class="text-xs text-[#FF9F0A]">警告</span>
+                </div>
+                <div class="flex items-center justify-between p-2 rounded-lg bg-[#FF9F0A]/10 border border-[#FF9F0A]/20">
+                  <div class="flex items-center space-x-2">
+                    <span class="status-dot status-warning"></span>
+                    <span class="text-sm text-white">#1输煤皮带</span>
+                  </div>
+                  <span class="text-xs text-[#FF9F0A]">警告</span>
+                </div>
+                <div class="flex items-center justify-between p-2 rounded-lg bg-[#64D2FF]/10 border border-[#64D2FF]/20">
+                  <div class="flex items-center space-x-2">
+                    <span class="status-dot status-success"></span>
+                    <span class="text-sm text-white">#3给水泵振动</span>
+                  </div>
+                  <span class="text-xs text-[#64D2FF]">注意</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="card p-5">
+              <h3 class="font-semibold text-white mb-4">设备健康度分布</h3>
+              <div class="flex items-center justify-center mb-4">
+                <div class="relative w-40 h-40">
+                  <canvas id="healthDistChart"></canvas>
+                </div>
+              </div>
+              <div class="grid grid-cols-2 gap-2">
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center space-x-2">
+                    <span class="w-2 h-2 rounded-full bg-[#30D158]"></span>
+                    <span class="text-xs text-[#98989D]">健康(&gt;90)</span>
+                  </div>
+                  <span class="text-xs font-semibold mono">156台</span>
+                </div>
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center space-x-2">
+                    <span class="w-2 h-2 rounded-full bg-[#64D2FF]"></span>
+                    <span class="text-xs text-[#98989D]">良好(70-90)</span>
+                  </div>
+                  <span class="text-xs font-semibold mono">62台</span>
+                </div>
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center space-x-2">
+                    <span class="w-2 h-2 rounded-full bg-[#FF9F0A]"></span>
+                    <span class="text-xs text-[#98989D]">警告(50-70)</span>
+                  </div>
+                  <span class="text-xs font-semibold mono">28台</span>
+                </div>
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center space-x-2">
+                    <span class="w-2 h-2 rounded-full bg-[#FF3B30]"></span>
+                    <span class="text-xs text-[#98989D]">严重(&lt;50)</span>
+                  </div>
+                  <span class="text-xs font-semibold mono">10台</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="card p-5">
+              <div class="flex items-center justify-between mb-4">
+                <h3 class="font-semibold text-white">工单待办</h3>
+                <button class="text-xs text-[#0A84FF] hover:underline">查看全部</button>
+              </div>
+              <div class="space-y-2">
+                <div class="p-3 rounded-lg bg-[#3A3A3C]/50 hover:bg-[#3A3A3C] transition-all cursor-pointer">
+                  <div class="flex items-center justify-between mb-1">
+                    <span class="px-2 py-0.5 text-xs rounded bg-[#FF3B30]/10 text-[#FF3B30]">紧急</span>
+                    <span class="text-xs text-[#98989D]">剩余2h</span>
+                  </div>
+                  <p class="text-sm font-medium text-white">WO-20240115-001</p>
+                  <p class="text-xs text-[#98989D]">#2引风机轴承更换</p>
+                </div>
+                <div class="p-3 rounded-lg bg-[#3A3A3C]/50 hover:bg-[#3A3A3C] transition-all cursor-pointer">
+                  <div class="flex items-center justify-between mb-1">
+                    <span class="px-2 py-0.5 text-xs rounded bg-[#FF9F0A]/10 text-[#FF9F0A]">一般</span>
+                    <span class="text-xs text-[#98989D]">剩余1天</span>
+                  </div>
+                  <p class="text-sm font-medium text-white">WO-20240115-002</p>
+                  <p class="text-xs text-[#98989D]">输煤皮带定期巡检</p>
+                </div>
+                <div class="p-3 rounded-lg bg-[#3A3A3C]/50 hover:bg-[#3A3A3C] transition-all cursor-pointer">
+                  <div class="flex items-center justify-between mb-1">
+                    <span class="px-2 py-0.5 text-xs rounded bg-[#64D2FF]/10 text-[#64D2FF]">普通</span>
+                    <span class="text-xs text-[#98989D]">剩余3天</span>
+                  </div>
+                  <p class="text-sm font-medium text-white">WO-20240115-003</p>
+                  <p class="text-xs text-[#98989D]">#1主变油温检查</p>
                 </div>
               </div>
             </div>
@@ -3656,6 +4210,11 @@
     updateTime();
     setInterval(updateTime, 1000);
 
+    function toggleSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      sidebar.classList.toggle('open');
+    }
+
     function switchView(view) {
       const views = document.querySelectorAll('[id^="view-"]');
       views.forEach(v => v.classList.add('hidden'));
@@ -3670,8 +4229,14 @@
       });
       event.currentTarget.classList.add('active');
 
+      const sidebar = document.getElementById('sidebar');
+      if (window.innerWidth <= 768) {
+        sidebar.classList.remove('open');
+      }
+
       const titles = {
         'dashboard': '驾驶舱',
+        'dashboard-evo': '驾驶舱进化',
         'fuel': '燃料监测',
         'conveyor': '输煤监测',
         'production': '生产过程',
@@ -4013,12 +4578,98 @@
       });
     }
 
+    function initHealthTrendChart() {
+      const ctx = document.getElementById('healthTrendChart');
+      if (!ctx) return;
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: ['1/9', '1/10', '1/11', '1/12', '1/13', '1/14', '1/15'],
+          datasets: [{
+            label: '健康度',
+            data: [90.2, 90.8, 91.5, 91.2, 92.0, 91.8, 92.5],
+            borderColor: '#30D158',
+            backgroundColor: 'rgba(48, 209, 88, 0.1)',
+            fill: true,
+            tension: 0.4,
+            pointRadius: 3,
+            pointBackgroundColor: '#30D158'
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { grid: { color: '#2C2C2E', drawBorder: false }, ticks: { color: '#98989D', font: { size: 10 } } },
+            y: { grid: { color: '#2C2C2E', drawBorder: false }, ticks: { color: '#98989D', font: { size: 10 } }, min: 85, max: 100 }
+          }
+        }
+      });
+    }
+
+    function initAlarmTrendChart() {
+      const ctx = document.getElementById('alarmTrendChart');
+      if (!ctx) return;
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: ['1/16', '1/17', '1/18', '1/19', '1/20', '1/21', '1/22', '1/23', '1/24', '1/25'],
+          datasets: [{
+            label: '报警数',
+            data: [18, 15, 22, 19, 14, 16, 12, 10, 8, 6],
+            backgroundColor: function(context) {
+              const index = context.dataIndex;
+              if (index >= 7) return '#30D158';
+              if (index >= 4) return '#FF9F0A';
+              return '#FF3B30';
+            },
+            borderRadius: 4
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { grid: { color: '#2C2C2E', drawBorder: false }, ticks: { color: '#98989D', font: { size: 9 } } },
+            y: { grid: { color: '#2C2C2E', drawBorder: false }, ticks: { color: '#98989D', font: { size: 10 } }, beginAtZero: true }
+          }
+        }
+      });
+    }
+
+    function initEvoHealthDistChart() {
+      const ctx = document.getElementById('healthDistChart');
+      if (!ctx) return;
+      new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: ['健康', '良好', '警告', '严重'],
+          datasets: [{
+            data: [156, 62, 28, 10],
+            backgroundColor: ['#30D158', '#64D2FF', '#FF9F0A', '#FF3B30'],
+            borderWidth: 0,
+            cutout: '70%'
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } }
+        }
+      });
+    }
+
     document.addEventListener('DOMContentLoaded', function() {
       initHealthChart();
       initVolumeChart();
       initThermalTrendChart();
       initElecticalTrendChart();
       initGasChart();
+      initHealthTrendChart();
+      initAlarmTrendChart();
+      initEvoHealthDistChart();
     });
   </script>
 </body>
